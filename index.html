@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amaanat: which one feels right?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#E6E9E4; --surface:#F4F5F1; --ink:#18211E; --muted:#5E6A65; --line:#CDD3CD;
+  --green:#1E5B4F; --green-soft:#D7E6E0; --gold:#B8872B; --gold-soft:#F3E7CC;
+  --chosen:#1E5B4F; --focus:#B8872B;
+  color-scheme:light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#121715; --surface:#1A201D; --ink:#E9EDEA; --muted:#9AA6A0; --line:#2C3531;
+    --green:#7FC2AE; --green-soft:#1F332D; --gold:#E0B566; --gold-soft:#33291A; --chosen:#7FC2AE;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121715; --surface:#1A201D; --ink:#E9EDEA; --muted:#9AA6A0; --line:#2C3531;
+  --green:#7FC2AE; --green-soft:#1F332D; --gold:#E0B566; --gold-soft:#33291A; --chosen:#7FC2AE;
+  color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Onest,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,.opt:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+.ur{font-family:"Noto Nastaliq Urdu",serif;direction:rtl;line-height:2.1}
+
+/* ---------- shell ---------- */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);display:flex;align-items:center;gap:12px;padding:12px clamp(16px,3vw,32px);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.mark{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;letter-spacing:-.01em}
+.mark .seal{width:30px;height:30px;border-radius:9px;background:var(--green);display:grid;place-items:center;color:var(--bg)}
+.mark small{font-weight:500;color:var(--muted);font-size:14px}
+.top .grow{flex:1}
+.who{font-size:14px;color:var(--muted);padding:6px 12px;border:1px solid var(--line);border-radius:999px;white-space:nowrap}
+.tbtn{background:transparent;border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:14px}
+.tbtn:hover{border-color:var(--ink)}
+main{max-width:1180px;margin:0 auto;padding:clamp(20px,3vw,36px) clamp(16px,3vw,32px) 60px}
+
+/* start */
+.start{max-width:560px;margin:4vh auto 0}
+.start h1{font-size:clamp(30px,4vw,42px);line-height:1.1;letter-spacing:-.02em;margin:0 0 8px}
+.start p{color:var(--muted);margin:0 0 28px}
+.field{margin-bottom:22px}
+.field label{display:block;font-weight:600;font-size:15px;margin-bottom:8px}
+.field input{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:9px 15px;font-size:15px}
+.chip[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--bg)}
+.go{background:var(--green);color:var(--bg);border:0;border-radius:14px;padding:15px 22px;font-weight:600;font-size:16px;width:100%}
+.go:disabled{opacity:.4;cursor:not-allowed}
+.resume{margin-top:34px;border-top:1px solid var(--line);padding-top:18px}
+.resume h2{font-size:15px;color:var(--muted);font-weight:500;margin:0 0 10px}
+.resume button{display:flex;justify-content:space-between;width:100%;background:transparent;border:0;border-bottom:1px solid var(--line);padding:11px 2px;text-align:left}
+.resume button span:last-child{color:var(--muted);font-size:14px}
+
+/* question */
+.qmeta{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:14px;margin-bottom:14px}
+.qmeta .bar{flex:1;height:4px;border-radius:4px;background:var(--line);overflow:hidden}
+.qmeta .bar i{display:block;height:100%;background:var(--green);transition:width .3s}
+.qmeta .star{color:var(--gold);font-weight:600}
+.qhead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 28px;margin-bottom:clamp(20px,3vw,34px)}
+.qhead h1{font-size:clamp(26px,3.4vw,40px);line-height:1.12;letter-spacing:-.022em;margin:0;max-width:22ch;font-weight:650}
+.qhead .ur{font-size:clamp(18px,2vw,23px);color:var(--muted);margin:0}
+.opts{display:flex;gap:clamp(16px,3vw,40px);justify-content:center;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 6px 14px;margin:0 -6px}
+.opt{flex:0 0 auto;scroll-snap-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;background:transparent;border:0;padding:14px 14px 16px;border-radius:30px;transition:background .2s}
+.opt .lab{display:flex;align-items:center;min-height:50px;gap:10px;font-weight:600;font-size:17px;max-width:270px;text-align:left}
+.opt .letter{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:2px solid var(--ink);display:grid;place-items:center;font-size:14px;font-weight:700}
+.opt .pick{font-size:14px;color:var(--muted);height:20px}
+.opt:hover{background:color-mix(in srgb,var(--surface) 70%,transparent)}
+.opt.on{background:var(--green-soft)}
+.opt.on .letter{background:var(--chosen);border-color:var(--chosen);color:var(--bg)}
+.opt.on .pick{color:var(--chosen);font-weight:600}
+.opt.on .ph{box-shadow:0 0 0 4px var(--chosen),0 18px 40px -18px rgba(0,0,0,.45)}
+.navrow{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:22px;flex-wrap:wrap}
+.navrow .mid{display:flex;gap:8px}
+.nbtn{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:11px 18px;font-size:15px}
+.nbtn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600}
+.nbtn[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold)}
+.nbtn:disabled{opacity:.35;cursor:not-allowed}
+.keys{font-size:13px;color:var(--muted);text-align:center;margin-top:16px}
+.saved{font-size:13px;color:var(--muted)}
+
+/* results */
+.res h1{font-size:clamp(26px,3vw,36px);margin:0 0 6px;letter-spacing:-.02em}
+.res p{color:var(--muted);margin:0 0 20px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:16px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}
+th{font-weight:600;white-space:nowrap}
+td.q{min-width:240px}
+td.q small{display:block;color:var(--muted)}
+.cell{display:inline-grid;place-items:center;min-width:28px;height:28px;border-radius:8px;font-weight:700;font-size:13px}
+.cA{background:var(--green);color:var(--bg)} .cB{background:var(--gold);color:#1a1405} .cC{background:#6F7E9A;color:#fff} .cN{background:var(--line);color:var(--muted)}
+.tally{color:var(--muted);white-space:nowrap}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+
+/* ---------- prototype (fixed app palette) ---------- */
+.ph{--p:#1E5B4F;--ps:#E1ECE7;--pi:#18211E;--pm:#68736E;--pl:#E2E6E1;--pg:#9C6F1C;--pgs:#F6EBD2;--pr:#9E3A35;--prs:#F7E4E1;
+  width:262px;height:548px;border-radius:40px;background:#161C1A;padding:9px;flex:0 0 auto;box-shadow:0 18px 40px -18px rgba(0,0,0,.45);transition:box-shadow .2s;color-scheme:light}
+.scr{position:relative;height:100%;border-radius:32px;overflow:hidden;background:#F5F6F2;color:var(--pi);font:12px/1.4 Onest,system-ui,sans-serif;display:flex;flex-direction:column;text-align:left}
+.scr::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:74px;height:20px;background:#161C1A;border-radius:12px;z-index:3}
+.sb{display:flex;justify-content:space-between;align-items:center;padding:10px 22px 4px;font-weight:600;font-size:11.5px;height:34px;flex:0 0 auto}
+.sb .dots{display:flex;gap:3px;align-items:flex-end}
+.sb .dots i{width:3px;background:currentColor;border-radius:1px}
+.sb .bat{width:20px;height:10px;border:1.4px solid currentColor;border-radius:3px;margin-left:5px;position:relative}
+.sb .bat::after{content:"";position:absolute;inset:1.4px 5px 1.4px 1.4px;background:currentColor;border-radius:1px}
+.hi{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:92px;height:4px;border-radius:3px;background:#161C1A;opacity:.85}
+.ab{display:flex;align-items:center;gap:6px;padding:8px 14px 10px;flex:0 0 auto}
+.ab .bk{color:var(--p);display:flex}
+.ab .abt{font-size:16px;font-weight:650;letter-spacing:-.01em;flex:1}
+.bd{flex:1;display:flex;flex-direction:column;gap:8px;padding:0 14px 22px;overflow:hidden}
+.sp{flex:1}
+.i{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto}
+.i.sm{width:13px;height:13px}.i.lg{width:22px;height:22px}
+.cd{background:#fff;border:1px solid var(--pl);border-radius:14px;padding:10px 11px}
+.cd.dash{border:1.5px dashed #B9C2BC;background:transparent;text-align:center;padding:14px 10px}
+.cd.red{border-color:#E7C3BE;background:var(--prs)}
+.rw{display:flex;align-items:center;gap:9px}
+.rw+.rw{margin-top:9px;padding-top:9px;border-top:1px solid var(--pl)}
+.ic{width:30px;height:30px;border-radius:10px;background:var(--ps);color:var(--p);display:grid;place-items:center;flex:0 0 auto}
+.ic.gold{background:var(--pgs);color:var(--pg)}.ic.red{background:#F1D6D2;color:var(--pr)}.ic.grey{background:#ECEEEA;color:var(--pm)}
+.av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:650;font-size:12px;color:#fff;flex:0 0 auto}
+.av.lg{width:46px;height:46px;font-size:17px}
+.a1{background:#1E5B4F}.a2{background:#9C6F1C}.a3{background:#5B6B8C}.a4{background:#8A5A6E}
+.tx{flex:1;min-width:0}
+.t{font-weight:600;font-size:12.5px}
+.s{font-size:10.5px;color:var(--pm)}
+.big{font-size:17px;line-height:1.28;font-weight:600;letter-spacing:-.01em}
+.mut{font-size:10.5px;color:var(--pm)}.c{text-align:center}
+.lbl{font-size:10.5px;color:var(--pm);font-weight:500;margin-top:4px}
+.bn{display:flex;gap:8px;align-items:flex-start;border-radius:12px;padding:9px 10px;font-size:11px;background:#ECEEEA;color:#3E4844}
+.bn.gold{background:var(--pgs);color:#6B4D12}.bn.green{background:var(--ps);color:#1A4C42}
+.btn{height:38px;border-radius:12px;background:var(--p);color:#fff;display:grid;place-items:center;font-weight:600;font-size:12.5px;flex:0 0 auto}
+.btn.ghost{background:transparent;color:var(--p);border:1.5px solid #BFD3CB}
+.btn.off{background:#D9DDD8;color:#8C9590}
+.btn.sm{height:26px;font-size:11px;padding:0 10px;border-radius:9px;display:inline-grid}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;padding:3px 8px;border-radius:999px;background:var(--ps);color:var(--p);white-space:nowrap}
+.tag.gold{background:var(--pgs);color:var(--pg)}.tag.dark{background:#28312D;color:#fff}.tag.grey{background:#ECEEEA;color:var(--pm)}.tag.red{background:#F1D6D2;color:var(--pr)}
+.tg{width:30px;height:18px;border-radius:9px;background:var(--p);position:relative;flex:0 0 auto}
+.tg::after{content:"";position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:#fff}
+.tg.off{background:#CCD2CD}.tg.off::after{right:auto;left:2px}
+.tg.lk{opacity:.55}
+.fld{background:#fff;border:1px solid var(--pl);border-radius:11px;padding:7px 10px}
+.fld .s{margin-bottom:2px}
+.fld .v{font-size:12.5px;display:flex;justify-content:space-between;align-items:center}
+.ring{width:96px;height:96px;border-radius:50%;margin:6px auto;display:grid;place-items:center;background:conic-gradient(var(--pg) 0 86%,#EADFC6 0)}
+.ring>div{width:80px;height:80px;border-radius:50%;background:#F5F6F2;display:grid;place-items:center;text-align:center;line-height:1.05}
+.ring b{font-size:28px;display:block}.ring span{font-size:10px;color:var(--pm)}
+.track{display:flex;gap:4px;align-items:center;margin:4px 0}
+.track i{flex:1;height:8px;border-radius:4px;background:#DFE4DF}
+.track i.f{background:var(--p)}
+.steps{display:flex;flex-direction:column;gap:0}
+.st{display:flex;gap:9px;padding-bottom:12px;position:relative}
+.st::before{content:"";position:absolute;left:6px;top:15px;bottom:0;width:2px;background:#D9DED9}
+.st:last-child::before{display:none}
+.st .d{width:14px;height:14px;border-radius:50%;border:2px solid #B9C2BC;background:#F5F6F2;flex:0 0 auto;margin-top:1px;position:relative;z-index:1}
+.st .d.f{background:var(--p);border-color:var(--p)}
+.keypad{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.keypad i{height:30px;border-radius:10px;background:#fff;border:1px solid var(--pl);display:grid;place-items:center;font-style:normal;font-weight:600;font-size:13px}
+.pin{display:flex;gap:9px;justify-content:center;margin:4px 0}
+.pin i{width:10px;height:10px;border-radius:50%;border:1.5px solid var(--pi)}
+.pin i.f{background:var(--pi)}
+.prog{height:4px;border-radius:3px;background:#DFE4DF;overflow:hidden}.prog i{display:block;height:100%;background:var(--p)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.grid i{aspect-ratio:1;border-radius:6px;position:relative}
+.cb{width:15px;height:15px;border-radius:5px;border:1.6px solid #AFB8B2;flex:0 0 auto;display:grid;place-items:center}
+.cb.f{background:var(--p);border-color:var(--p);color:#fff}
+.grp{font-size:11px;font-weight:650;display:flex;justify-content:space-between;align-items:center;margin-top:2px}
+.dim{opacity:.5}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:22px 22px 0 0;padding:14px 14px 24px;box-shadow:0 -10px 30px rgba(0,0,0,.15);display:flex;flex-direction:column;gap:8px;z-index:2}
+.grab{width:34px;height:4px;border-radius:3px;background:#D3D8D3;margin:0 auto 4px}
+.veil{position:absolute;inset:0;background:rgba(20,26,24,.42);z-index:1}
+.ok{color:var(--p)}.no{color:var(--pr)}
+/* chat */
+.wa .sb{background:#1F3A33;color:#fff}
+.wah{background:#1F3A33;color:#fff;display:flex;align-items:center;gap:8px;padding:4px 12px 10px}
+.wab{flex:1;background:#E9E4DA;padding:12px 10px;display:flex;flex-direction:column;gap:7px}
+.bub{max-width:84%;background:#fff;border-radius:10px;padding:7px 9px;font-size:11.5px;box-shadow:0 1px 0 rgba(0,0,0,.06)}
+.bub.me{align-self:flex-end;background:#D9F0D6}
+.bub small{display:block;text-align:right;font-size:9px;color:#7A857F;margin-top:2px}
+.bub .who{font-size:10px;font-weight:650;color:#8A5A6E;margin-bottom:1px;border:0;padding:0}
+.bub.blur{color:transparent;text-shadow:0 0 7px rgba(0,0,0,.45);position:relative}
+.bub.blur .hide{position:absolute;inset:0;display:grid;place-items:center;color:#5E6A65;text-shadow:none;font-size:10px;font-weight:600}
+.lp{background:#F1F3EF;border-radius:8px;padding:7px;margin-top:5px;display:flex;gap:7px;align-items:center}
+.wai{background:#E9E4DA;padding:6px 8px 22px;display:flex;gap:6px}
+.wai div{flex:1;height:28px;border-radius:14px;background:#fff}
+/* lock & home */
+.lock{background:linear-gradient(160deg,#2B4A42,#1A2622 60%,#3D3423);color:#fff}
+.lock .time{font-size:56px;font-weight:300;text-align:center;letter-spacing:-.03em;line-height:1;margin-top:20px}
+.lock .date{text-align:center;font-size:12px;opacity:.85;margin-top:4px}
+.ntf{margin:22px 10px 0;background:rgba(255,255,255,.2);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:16px;padding:10px 11px;display:flex;gap:9px}
+.home{background:linear-gradient(170deg,#C9D8D0,#E9DFC9);}
+.apps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px 6px;padding:22px 14px}
+.app{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:9.5px;color:#1F2A26;text-align:center}
+.app i{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;color:#fff;font-style:normal}
+.app.target i{box-shadow:0 0 0 3px #fff,0 0 0 5px rgba(30,91,79,.55)}
+.dock{position:absolute;left:10px;right:10px;bottom:20px;height:62px;border-radius:20px;background:rgba(255,255,255,.4);display:flex;justify-content:space-around;align-items:center}
+.dock i{width:40px;height:40px;border-radius:11px;display:block}
+.hero{height:190px;flex:0 0 auto;position:relative;overflow:hidden}
+@media (max-width:720px){
+  .opts{justify-content:flex-start}
+  .qhead h1{max-width:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="mark"><span class="seal"><svg class="i" viewBox="0 0 24 24" style="width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>Amaanat</div>
+  <div class="grow"></div>
+  <span class="who" id="who" hidden></span>
+</header>
+<main id="app"></main>
+
+<script>
+/* Paste your Google Apps Script web app URL here */
+const ENDPOINT='https://script.google.com/macros/s/AKfycbzHxDijY6IjOCBL6bgqpOrze2lYNkrg1bxlMcfkQ88t1Qwk7_MmcQKfkE60N1pNbze8/exec';
+
+/* ================= icons ================= */
+const IC={
+ lock:'<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ doc:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/>',
+ photo:'<rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/>',
+ chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+ bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/>',
+ shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+ check:'<path d="M5 12l5 5 9-10"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ bank:'<path d="M3 10l9-6 9 6M5 10v8M10 10v8M14 10v8M19 10v8M3 20h18"/>',
+ wallet:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M16 11h5v4h-5a2 2 0 0 1 0-4z"/>',
+ pin:'<path d="M12 21s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/>',
+ eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+ link:'<path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1"/><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/>',
+ pause:'<path d="M9 5v14M15 5v14"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ hosp:'<rect x="4" y="4" width="16" height="16" rx="3"/><path d="M12 8v8M8 12h8"/>',
+ back:'<path d="M15 6l-6 6 6 6"/>',
+ chev:'<path d="M9 6l6 6-6 6"/>',
+ trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+ phone:'<rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/>',
+ upload:'<path d="M12 16V4M7 9l5-5 5 5M4 20h16"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c3 0 5 1.6 5 4.5"/>',
+ book:'<path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/>',
+ note:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/>',
+ cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+ cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/>',
+ map:'<path d="M9 4l6 2 5-2v15l-5 2-6-2-5 2V6z"/><path d="M9 4v15M15 6v15"/>',
+ sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"/>',
+ calc:'<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"/>',
+ msg:'<path d="M4 5h16v11H8l-4 4z"/><path d="M8 10h8"/>',
+ call:'<path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/>',
+ sim:'<path d="M7 3h7l4 4v14H7z"/><rect x="9.5" y="11" width="5" height="6" rx="1"/>',
+ fp:'<path d="M8 11a4 4 0 0 1 8 0v2a8 8 0 0 1-1 4"/><path d="M12 11v3a10 10 0 0 1-2 6"/><path d="M5 9a7 7 0 0 1 14 0"/><path d="M5 13v-1M19 12v2"/>',
+ heart:'<path d="M12 20s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 9c0 6-8 11-8 11z"/>'
+};
+const I=(n,c='')=>`<svg class="i ${c}" viewBox="0 0 24 24" aria-hidden="true">${IC[n]}</svg>`;
+
+/* ================= prototype building blocks ================= */
+const SB=(c='')=>`<div class="sb" style="${c}"><span>9:41</span><span style="display:flex;align-items:center"><span class="dots"><i style="height:4px"></i><i style="height:6px"></i><i style="height:8px"></i><i style="height:10px"></i></span><span class="bat"></span></span></div>`;
+const ph=(inner,cls='',nosb=false)=>`<div class="ph"><div class="scr ${cls}">${nosb?'':SB()}${inner}<div class="hi"></div></div></div>`;
+const ab=(t,back=true,right='')=>`<div class="ab">${back?`<span class="bk">${I('back','lg')}</span>`:''}<span class="abt">${t}</span>${right}</div>`;
+const bd=x=>`<div class="bd">${x}</div>`;
+const row=(lead,t,s='',right='')=>`<div class="rw">${lead}<div class="tx"><div class="t">${t}</div>${s?`<div class="s">${s}</div>`:''}</div>${right}</div>`;
+const ic=(n,tone='')=>`<span class="ic ${tone}">${I(n)}</span>`;
+const av=(l,c,lg='')=>`<span class="av ${c} ${lg}">${l}</span>`;
+const cd=(x,cls='')=>`<div class="cd ${cls}">${x}</div>`;
+const bn=(n,t,tone='')=>`<div class="bn ${tone}">${n?I(n,'sm'):''}<span>${t}</span></div>`;
+const btn=(t,k='')=>`<div class="btn ${k}">${t}</div>`;
+const tag=(t,k='')=>`<span class="tag ${k}">${t}</span>`;
+const tg=(k='')=>`<span class="tg ${k}"></span>`;
+const fld=(l,v,r='')=>`<div class="fld"><div class="s">${l}</div><div class="v"><span>${v}</span>${r}</div></div>`;
+const sp='<div class="sp"></div>';
+const people={B:['B','a1','Bilal','Son'],S:['S','a2','Sana','Daughter'],H:['H','a3','Hira','Friend'],N:['N','a4','Nasreen','Ammi']};
+const pr=(k,sub,right='')=>{const p=people[k];return row(av(p[0],p[1]),p[2],sub??p[3],right)};
+
+/* ---- shared screen makers ---- */
+function waitScr(n){
+  let track;
+  if(n<=7){track=`<div class="track">${Array.from({length:n},(_,i)=>`<i class="${i===0?'f':''}"></i>`).join('')}</div><div class="mut" style="display:flex;justify-content:space-between"><span>Today</span><span>Day ${n}</span></div>`}
+  else{track=`<div class="track"><i class="f" style="flex:1"></i><i style="flex:29"></i></div><div class="mut" style="display:flex;justify-content:space-between"><span>Today</span><span>Day 15</span><span>Day 30</span></div>`}
+  return ph(ab('Request sent')+bd(
+    `<div class="big" style="margin-top:6px">Ammi’s plan opens in <span style="color:var(--p)">${n} days</span></div>
+     <div class="mut">if she doesn’t reply.</div>${cd(track)}
+     ${cd(row(ic('pause','gold'),'She can stop it any time','with her PIN')+row(ic('bell'),'We remind her',n<=3?'Twice a day':(n<=7?'Every day':'Every 3 days')))}
+     ${sp}${btn('Cancel request','ghost')}`));
+}
+function sealScr(n,t,s,tone){
+  return ph(ab('Chats')+bd(
+    `${cd(row(ic('chat'),'WhatsApp & messages','12 chats'))}
+     <div class="lbl">Your wish</div>
+     <div class="cd" style="text-align:center;padding:18px 12px">
+       <div class="ic ${tone}" style="width:52px;height:52px;border-radius:16px;margin:0 auto 10px">${I(n,'lg')}</div>
+       <div class="big" style="font-size:16px">${t}</div><div class="s" style="margin-top:4px">${s}</div></div>
+     ${sp}${btn('Save wish')}`));
+}
+const tasks=[['sim','Keep her SIM active'],['users','Tell her WhatsApp groups'],['chat','Save her chats'],['doc','Death certificate'],['doc','FRC from NADRA'],['wallet','JazzCash & Easypaisa'],['bank','Bank: succession certificate'],['heart','Facebook memorial'],['phone','Decide who keeps her phone']];
+function chatScr(blur){
+  const b=(who,t,tm)=>blur?`<div class="bub blur"><div class="who">${who}</div>${t}<small>${tm}</small><span class="hide">${I('lock','sm')} ${who}’s message hidden</span></div>`:`<div class="bub"><div class="who">${who}</div>${t}<small>${tm}</small></div>`;
+  return ph(ab('Export chat',true)+`<div class="bd" style="padding:0;gap:0">
+    <div style="padding:0 14px 8px" class="mut">Family group, 14 members</div>
+    <div class="wab" style="flex:0 0 auto;padding:10px">
+     ${b('Khala','Did anyone hear back from the doctor?','8:02')}
+     <div class="bub me">Yes, reports are fine. Don’t worry.<small>8:05</small></div>
+     ${b('Sana','Ammi please rest today','8:07')}
+     <div class="bub me">I will beta. Dua karo.<small>8:10</small></div></div>
+    <div style="padding:10px 14px 22px;display:flex;flex-direction:column;gap:8px;flex:1">
+     ${blur?bn('shield','Only Ammi’s own messages are handed over.','green'):bn('users','The whole chat is handed over, with everyone’s messages.')}
+     ${sp}${btn('Hand over to Bilal')}</div></div>`);
+}
+function homeScr(target){
+  const apps=[['call','#3E8E5E','Phone'],['msg','#4A78B8','Messages'],['cam','#4B4F57','Camera'],['photo','#C2763E','Gallery'],['clock','#2A2F33','Clock'],['cal','#C24A4A','Calendar'],['sun','#3D8EC0','Weather'],['map','#5A9A72','Maps'],['calc','#6E6E6E','Calculator'],['gear','#7A8087','Settings'],null,['heart','#B5546E','Health']];
+  const html=apps.map(a=>a?`<div class="app"><i style="background:${a[1]}">${I(a[0],'lg')}</i>${a[2]}</div>`:target).join('');
+  return ph(`<div class="apps">${html}</div><div class="dock"><i style="background:#3E8E5E"></i><i style="background:#4A78B8"></i><i style="background:#4B4F57"></i><i style="background:#C2763E"></i></div>`,'home');
+}
+function onboard(title,sub,art){
+  return ph(`<div class="hero">${art}</div>`+bd(
+    `<div style="font-size:21px;font-weight:650;line-height:1.18;letter-spacing:-.015em;margin-top:6px">${title}</div>
+     <div class="s" style="font-size:12px">${sub}</div>${sp}
+     ${btn('Start')}<div class="mut c" style="margin-top:2px">Someone has passed away</div>`));
+}
+
+const KP=[1,2,3,4,5,6,7,8,9,'',0,''].map(n=>`<i style="${n===''?'visibility:hidden':''}">${n}</i>`).join('');
+const splitScr=(res,tx,tone)=>ph(ab('Ammi’s chats')+bd(`<div class="mut">Ammi’s wish: steward decides</div>${cd(pr('B','Wants to open them',tag('Open'))+pr('S','Wants them sealed',tag('Keep sealed','gold')))}<div class="cd" style="text-align:center;padding:16px 12px"><div class="t" style="font-size:13.5px">${res}</div><div style="margin-top:8px">${tag(tx,tone)}</div></div>`));
+const toneScr=t=>ph(ab('Your plan')+bd(`<div class="big" style="font-size:16px;margin-top:4px">${t}</div>${cd(row(ic('bank'),'Bank & wallets','3 items')+row(ic('photo'),'Photos','2 albums')+row(ic('doc'),'Documents','4 items')+row(ic('chat'),'Chats','Sealed',tag(I('lock','sm'),'grey')))}${sp}${btn('Looks right')}`));
+function catGrid(own){
+  const base=[['bank','Bank'],['wallet','Wallets'],['users','Social media'],['msg','Email'],['phone','Phone & SIM'],['doc','Documents'],['lock','Keys & lockers']];
+  const cell=([n,t],x='')=>`<div class="cd" style="padding:9px;display:flex;flex-direction:column;gap:6px">${ic(n,x)}<div class="t" style="font-size:11.5px">${t}</div></div>`;
+  let h=base.map(c=>cell(c)).join('');
+  if(own)h+=cell(['heart','Committee money'],'gold')+cell(['note','Prize bonds'],'gold')+`<div class="cd dash" style="padding:9px;display:grid;place-items:center;gap:4px">${I('plus')}<div class="t" style="font-size:11px">Add your own</div></div>`;
+  return `<div class="s">${own?'Add anything that matters to you':'Choose what to include'}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">${h}</div>`;
+}
+/* ================= questions ================= */
+const SECTIONS={rel:'Release',stw:'Stewards',tru:'Trust',con:'Content',han:'Handover',sta:'Getting started'};
+const Q=[
+/* ---- Release ---- */
+{id:'release',sec:'rel',top:true,decides:'Release model',
+ title:'If something happens, how should Amaanat know?',ur:'اگر کل کو کچھ ہو جائے، تو امانت کو کیسے پتا چلے؟',
+ opts:[
+ {k:'A',label:'No reply opens it',scr:()=>ph(ab('Amaanat',false)+bd(
+   `${bn('bell','Bilal said something may have happened to you.','gold')}
+    <div class="big">If you don’t reply, your plan opens for Bilal.</div>
+    <div class="ring"><div><b>6</b><span>days left</span></div></div>${sp}
+    ${btn('I’m here. Stop it.')}<div class="mut c">You’ll enter your PIN</div>`))},
+ {k:'B',label:'No reply, or a certificate to open sooner',scr:()=>ph(ab('Request sent')+bd(
+   `<div class="steps" style="margin-top:4px">
+     <div class="st"><span class="d f"></span><div><div class="t">You reported it</div><div class="s">Today, 10:20 am</div></div></div>
+     <div class="st"><span class="d"></span><div><div class="t">Ammi has 7 days to reply</div><div class="s">Opens if she doesn’t</div></div></div></div>
+    <div class="cd dash"><div class="ic" style="margin:0 auto 6px">${I('upload')}</div><div class="t">Add death certificate</div><div class="s">Optional. Opens the plan sooner.</div></div>
+    ${sp}${btn('Wait 7 days','ghost')}`))},
+ {k:'C',label:'Death certificate required',scr:()=>ph(ab('Open Ammi’s plan')+bd(
+   `${bn('doc','A death certificate is needed to open this plan.')}
+    <div class="cd dash" style="padding:22px 10px"><div class="ic" style="margin:0 auto 6px">${I('upload')}</div><div class="t">Upload death certificate</div><div class="s">Photo or PDF</div></div>
+    ${cd(row(ic('clock','grey'),'Amaanat checks it','Usually 1 to 2 days'))}
+    ${sp}${btn('Open plan','off')}`))}]},
+{id:'wait',sec:'rel',top:true,decides:'Default wait time',
+ title:'How long should it wait for a reply?',ur:'جواب کے لیے کتنے دن انتظار کرے؟',
+ opts:[{k:'A',label:'3 days',scr:()=>waitScr(3)},{k:'B',label:'7 days',scr:()=>waitScr(7)},{k:'C',label:'30 days',scr:()=>waitScr(30)}]},
+{id:'starter',sec:'rel',decides:'Who can start a request',
+ title:'Who can tell Amaanat that it has happened?',ur:'یہ خبر کون دے سکتا ہے؟',
+ opts:[
+ {k:'A',label:'Only stewards',scr:()=>ph(ab('Ammi’s plan')+bd(
+   `${cd(pr('N','Plan set up'))}
+    ${bn('lock','Only her stewards can report a passing.')}
+    <div class="lbl">Her steward</div>${cd(pr('B','Son',`<span class="btn sm ghost">Call</span>`))}
+    ${sp}${btn('Report a passing','off')}<div class="mut c">You’re viewing as Sana</div>`))},
+ {k:'B',label:'Anyone in the family',scr:()=>ph(ab('Ammi’s plan')+bd(
+   `${cd(pr('N','Plan set up'))}
+    <div class="lbl">Her steward</div>${cd(pr('B','Son'))}
+    ${bn('users','Anyone Ammi added can report. Bilal will be asked to confirm.','green')}
+    ${sp}${btn('Report that Ammi has passed away')}<div class="mut c">You’re viewing as Sana</div>`))}]},
+{id:'hospital',sec:'rel',decides:'Incapacity mode',
+ title:'What if you’re in hospital and can’t reply?',ur:'اگر آپ ہسپتال میں ہوں اور جواب نہ دے سکیں؟',
+ opts:[
+ {k:'A',label:'A hospital mode that pauses it',scr:()=>ph(ab('If I’m unwell')+bd(
+   `${cd(row(ic('hosp'),'Hospital mode','Pauses any request',tg()))}
+    <div class="lbl">While paused, Bilal can see</div>
+    ${cd(`<div style="display:flex;flex-wrap:wrap;gap:5px">${tag('Bills')}${tag('Medicines')}${tag('Doctor’s numbers')}${tag('Insurance')}</div><div class="s" style="margin-top:8px">Nothing else opens.</div>`)}
+    <div class="lbl">Who can turn it on</div>${cd(pr('B','Son')+pr('S','Daughter'))}`))},
+ {k:'B',label:'No special mode, only your PIN',scr:()=>ph(ab('Amaanat',false)+bd(
+   `${bn('bell','Bilal started a request. 5 days left.','gold')}
+    <div class="big" style="font-size:15px">Enter your PIN to stop it.</div>
+    <div class="pin"><i class="f"></i><i class="f"></i><i></i><i></i></div>
+    <div class="keypad">${[1,2,3,4,5,6,7,8,9,'',0,''].map(n=>`<i style="${n===''?'visibility:hidden':''}">${n}</i>`).join('')}</div>
+    <div class="mut c">No pause while you’re ill.</div>`))}]},
+{id:'veto',sec:'rel',decides:'How a stopped request is shown',
+ title:'If you stop a request, what does the steward see?',ur:'اگر آپ درخواست روک دیں، تو نگران کو کیا نظر آئے؟',
+ opts:[
+ {k:'A',label:'That you stopped it',scr:()=>ph(ab('Request')+bd(
+   `${cd(`<div class="ic red" style="margin-bottom:8px">${I('x')}</div><div class="t" style="font-size:14px">Ammi stopped this request</div><div class="s">She entered her PIN on 12 Jan, 4:10 pm.</div>`,'red')}
+    <div class="mut">Her plan stays closed.</div>${sp}${btn('Call Ammi','ghost')}<div class="mut c">You’re viewing as Bilal</div>`))},
+ {k:'B',label:'Only that it closed',scr:()=>ph(ab('Request')+bd(
+   `${cd(`<div class="ic grey" style="margin-bottom:8px">${I('check')}</div><div class="t" style="font-size:14px">This request is closed</div><div class="s">No details are shared.</div>`)}
+    ${sp}${btn('OK','ghost')}<div class="mut c">You’re viewing as Bilal</div>`))}]},
+{id:'asktone',sec:'rel',decides:'Wording of the check-in',
+ title:'When Amaanat checks on you, how should it ask?',
+ opts:[
+ {k:'A',label:'Say it plainly',scr:()=>ph(ab('Amaanat',false)+bd(`${bn('bell','Bilal reported that you may have passed away.','gold')}<div class="big">If this is a mistake, let us know.</div>${sp}${btn('I’m alive. Stop it.')}<div class="mut c">6 days left to reply</div>`))},
+ {k:'B',label:'Ask gently',scr:()=>ph(ab('Amaanat',false)+bd(`${bn('heart','Bilal is checking on you.','green')}<div class="big">Are you okay? Tap below so we know.</div>${sp}${btn('I’m okay')}<div class="mut c">6 days left to reply</div>`))}]},
+{id:'misuse',sec:'rel',decides:'Veto protection',
+ title:'If someone else has your phone, how is “stop” protected?',
+ opts:[
+ {k:'A',label:'PIN only',scr:()=>ph(ab('Stop request')+bd(`<div class="big" style="font-size:15px">Enter your PIN to stop it</div><div class="pin"><i class="f"></i><i class="f"></i><i></i><i></i></div><div class="keypad">${KP}</div>`))},
+ {k:'B',label:'PIN and fingerprint',scr:()=>ph(ab('Stop request')+bd(`<div class="big" style="font-size:15px">Confirm it’s you</div><div class="ic" style="width:88px;height:88px;border-radius:50%;margin:26px auto 10px"><svg class="i" viewBox="0 0 24 24" style="width:44px;height:44px">${IC.fp}</svg></div><div class="s c" style="font-size:11.5px">Touch the sensor, then enter your PIN.</div>${sp}${btn('Use PIN instead','ghost')}`))},
+ {k:'C',label:'PIN, and stewards are told',scr:()=>ph(ab('Request stopped')+bd(`${cd(`<div class="ic" style="margin-bottom:8px">${I('check')}</div><div class="t" style="font-size:14px">You stopped the request</div><div class="s">Your PIN was entered on this phone.</div>`)}<div class="lbl">We’ve told</div>${cd(pr('B','Son',tag('Told'))+pr('S','Daughter',tag('Told')))}${bn('','If this wasn’t you, they can call to check.')}`))}]},
+/* ---- Stewards ---- */
+{id:'model',sec:'stw',decides:'Steward model',
+ title:'One person for everything, or different people?',ur:'سب کچھ ایک شخص کے پاس، یا ہر چیز کے لیے الگ؟',
+ opts:[
+ {k:'A',label:'One steward, with exceptions',scr:()=>ph(ab('Your steward')+bd(
+   `<div class="cd" style="text-align:center;padding:16px">${av('B','a1','lg')}<div class="t" style="font-size:15px;margin-top:8px">Bilal</div><div class="s">Son</div><div style="margin-top:8px">${tag('Looks after everything')}</div></div>
+    <div class="lbl">Except</div>${cd(row(ic('chat'),'Chats','',`<span style="display:flex;align-items:center;gap:5px">${av('H','a3')}<span class="t">Hira</span></span>`))}
+    ${sp}${btn('Add exception','ghost')}`).replace('<span class="av a1 lg">','<span class="av a1 lg" style="margin:0 auto">'))},
+ {k:'B',label:'A person for each thing',scr:()=>ph(ab('Who looks after what')+bd(
+   cd([['bank','Bank & wallets','B'],['photo','Photos','S'],['chat','Chats','H'],['doc','Documents','B'],['sim','Phone & SIM','B']].map(([n,t,p])=>row(ic(n),t,'',`<span style="display:flex;align-items:center;gap:5px"><span class="s">${people[p][2]}</span>${av(people[p][0],people[p][1])}</span>`)).join(''))+sp+btn('Save')))}]},
+{id:'notify',sec:'stw',top:true,decides:'Notification rules',
+ title:'When a request starts, who is told?',ur:'جب درخواست شروع ہو، تو کس کو بتایا جائے؟',
+ opts:[
+ {k:'A',label:'Every steward, always',scr:()=>ph(ab('When a request starts')+bd(
+   `<div class="mut">These people are told</div>
+    ${cd(pr('B','Son',tg('lk'))+pr('S','Daughter',tg('lk'))+pr('H','Friend',tg('lk')))}
+    ${bn('lock','All stewards are always told. This can’t be changed.')}`))},
+ {k:'B',label:'You choose who',scr:()=>ph(ab('When a request starts')+bd(
+   `<div class="mut">Choose who is told</div>
+    ${cd(pr('B','Son',tg())+pr('S','Daughter',tg())+pr('H','Won’t be told',tg('off')))}
+    ${bn('','Hira will not know a request has started.')}`))}]},
+{id:'disagree',sec:'stw',decides:'Strength of wishes',
+ title:'Can your family change your wishes later?',ur:'کیا گھر والے بعد میں آپ کی خواہش بدل سکتے ہیں؟',
+ opts:[
+ {k:'A',label:'Yes, if stewards agree',scr:()=>ph(ab('Chats')+bd(
+   `${cd(row(ic('lock'),'Your wish: Seal','12 chats',tag('Guidance')))}
+    <div class="cd"><div class="t">If they disagree with you</div><div class="s" style="margin-top:3px">Bilal and Sana can open it if both agree.</div>
+     <div style="display:flex;gap:6px;margin-top:10px;align-items:center">${av('B','a1')}${av('S','a2')}<span class="s">Both must say yes</span></div></div>`))},
+ {k:'B',label:'No, it’s locked',scr:()=>ph(ab('Chats')+bd(
+   `${cd(row(ic('lock'),'Your wish: Seal','12 chats',tag(I('lock','sm')+' Locked','dark')))}
+    <div class="cd"><div class="t">If they disagree with you</div><div class="s" style="margin-top:3px">Nobody can open it. Not even together.</div></div>`))}]},
+{id:'suggest',sec:'stw',decides:'Default steward by age',
+ title:'Should Amaanat suggest who your steward is?',
+ opts:[
+ {k:'A',label:'Suggest family first',scr:()=>ph(ab('Choose a steward')+bd(`<div class="lbl">Suggested for you</div>${cd(pr('B','Son',tag('Suggested'))+pr('S','Daughter',tag('Suggested')))}<div class="lbl">Others</div>${cd(pr('H','Friend'))}${sp}${btn('Choose Bilal')}`))},
+ {k:'B',label:'No suggestion, you pick',scr:()=>ph(ab('Choose a steward')+bd(`<div class="big" style="font-size:15px">Who do you trust most with this?</div><div class="s">Family or a friend. Anyone.</div>${fld('Search contacts','<span style="color:#A3ACA7">Type a name</span>')}${cd(pr('B','')+pr('H','')+pr('S',''))}`))}]},
+{id:'stewardsplit',sec:'stw',decides:'How the app handles disagreement',
+ title:'If your stewards disagree with each other, who decides?',
+ opts:[
+ {k:'A',label:'Main steward decides',scr:()=>splitScr('Bilal decides, as the main steward.','Bilal’s choice','')},
+ {k:'B',label:'Both must agree',scr:()=>splitScr('Nothing changes until both agree.','Waiting for both','gold')}]},
+/* ---- Trust ---- */
+{id:'passwords',sec:'tru',top:true,decides:'Passwords: default or optional',
+ title:'Save the password, or only where to find it?',ur:'پاس ورڈ محفوظ کریں، یا صرف یہ کہ وہ کہاں لکھا ہے؟',
+ opts:[
+ {k:'A',label:'Save the password',scr:()=>ph(ab('Meezan Bank app')+bd(
+   `${fld('Username','nasreen.k')}${fld('Password','••••••••••',I('eye'))}${fld('App PIN','••••',I('eye'))}
+    ${bn('shield','Scrambled on your phone. Only Bilal can read it, after release.','green')}${sp}${btn('Save')}`))},
+ {k:'B',label:'Only where it’s kept',scr:()=>ph(ab('Meezan Bank app')+bd(
+   `${fld('Where is the password?','Blue diary, top drawer of the almirah')}${fld('Card & PIN','Card in black handbag. PIN in same diary.')}
+    ${bn('pin','No passwords are saved. Only where things are.')}${sp}${btn('Save')}`))}]},
+{id:'seeall',sec:'tru',decides:'Placement of “what we can see”',
+ title:'When should you see who can read your passwords?',ur:'آپ کو کب دکھایا جائے کہ پاس ورڈ کون پڑھ سکتا ہے؟',
+ opts:[
+ {k:'A',label:'Right before you save',scr:()=>ph(ab('Meezan Bank app')+bd(fld('Username','nasreen.k')+fld('Password','••••••••••'))+
+   `<div class="veil"></div><div class="sheet"><div class="grab"></div><div class="t" style="font-size:15px">Before you save</div><div class="s">Who can read this password?</div>
+    ${row(av('N','a4'),'You','',`<span class="ok">${I('check')}</span>`)}
+    ${row(av('B','a1'),'Bilal','only after release',`<span class="ok">${I('check')}</span>`)}
+    ${row(ic('users','grey'),'Amaanat team','sees scrambled text',`<span class="no">${I('x')}</span>`)}
+    ${row(ic('shield','grey'),'A hacker','sees scrambled text',`<span class="no">${I('x')}</span>`)}
+    ${btn('Got it, save')}</div>`)},
+ {k:'B',label:'In settings, when you want',scr:()=>ph(ab('Settings',false)+bd(
+   cd(row(ic('note','grey'),'Language','English, اردو',I('chev'))+row(ic('lock','grey'),'App lock','On',I('chev'))+row(ic('upload','grey'),'Backup','Last: today',I('chev')))+
+   cd(row(ic('eye'),'What Amaanat can see','Who can read your data',I('chev')))+cd(row(ic('user','grey'),'Help','',I('chev')))))}]},
+{id:'rehearse',sec:'tru',decides:'Rehearsal in setup',
+ title:'Practise the handover while setting up?',ur:'کیا سیٹ اپ کے دوران ایک مشق ہو؟',
+ opts:[
+ {k:'A',label:'Yes, as part of setup',scr:()=>ph(ab('Practice run')+bd(
+   `<div class="prog"><i style="width:80%"></i></div><div class="mut">Step 4 of 5</div>
+    <div class="big">This is what Bilal will see.</div>
+    <div class="cd" style="background:#F0F3EF"><div class="t" style="margin-bottom:6px">Ammi’s plan</div>
+     ${row(ic('bank'),'Bank & wallets','3 items')}${row(ic('photo'),'Photos','2 albums')}${row(ic('chat'),'Chats','Sealed',tag(I('lock','sm'),'grey'))}</div>
+    ${sp}${btn('Looks right')}${btn('Change something','ghost')}`))},
+ {k:'B',label:'No, maybe later',scr:()=>ph(ab('',false)+bd(
+   `<div style="margin:36px auto 6px" class="ic"><span style="display:grid;place-items:center;width:30px;height:30px">${I('check','lg')}</span></div>
+    <div class="big c">Your plan is saved.</div><div class="s c">Bilal has been invited.</div>${sp}
+    <div class="mut c" style="text-decoration:underline">Try a practice run</div>${btn('Done')}`))}]},
+{id:'invite',sec:'tru',decides:'Invite channel',
+ title:'How should the steward invite reach you?',ur:'نگران بننے کی دعوت آپ تک کیسے پہنچے؟',
+ opts:[
+ {k:'A',label:'A WhatsApp message from Ammi',scr:()=>`<div class="ph"><div class="scr wa">${SB()}<div class="wah">${I('back','lg')}${av('N','a4')}<div><div class="t">Ammi</div><div style="font-size:10px;opacity:.75">online</div></div></div>
+   <div class="wab"><div class="bub">Bilal beta, I’ve made you my steward on Amaanat. Please accept.<small>9:38</small></div>
+   <div class="bub">Please open this when you have time<div class="lp"><span class="ic" style="width:26px;height:26px">${I('lock','sm')}</span><div><div class="t" style="font-size:11px">Nasreen invited you</div><div class="s">amaanat.app</div></div></div><small>9:38</small></div>
+   <div class="bub me">Ok Ammi, will do 👍<small>9:40</small></div></div><div class="wai"><div></div></div><div class="hi"></div></div></div>`},
+ {k:'B',label:'A notification from the app',scr:()=>`<div class="ph"><div class="scr lock">${SB()}<div class="time">9:41</div><div class="date">Tuesday, 24 November</div>
+   <div class="ntf"><span class="ic" style="background:#E1ECE7">${I('lock')}</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><b style="font-size:11.5px">Amaanat</b><span style="font-size:10px;opacity:.8">now</span></div><div style="font-size:11.5px;margin-top:2px">Nasreen added you as her steward. Tap to accept.</div></div></div><div class="hi" style="background:#fff"></div></div></div>`}]},
+{id:'pwdefault',sec:'tru',decides:'Passwords: default or optional',
+ title:'Should the password box be there from the start?',
+ opts:[
+ {k:'A',label:'Shown from the start',scr:()=>ph(ab('Add JazzCash')+bd(`${fld('Account','0301 xxxxxxx')}${fld('Password','<span style="color:#A3ACA7">Enter password</span>',I('eye'))}${fld('Where is the phone kept?','<span style="color:#A3ACA7">Optional</span>')}${sp}${btn('Save')}`))},
+ {k:'B',label:'Hidden, add if you want',scr:()=>ph(ab('Add JazzCash')+bd(`${fld('Account','0301 xxxxxxx')}${fld('Where is the password?','<span style="color:#A3ACA7">e.g. written in my diary</span>')}<div class="cd dash" style="padding:10px;display:flex;gap:6px;align-items:center;justify-content:center">${I('plus','sm')}<span class="t" style="font-size:11.5px">Add the password itself</span>${tag('Optional','grey')}</div>${sp}${btn('Save')}`))}]},
+{id:'explain',sec:'tru',decides:'How zero-knowledge is explained',
+ title:'Which explanation makes you trust it more?',
+ opts:[
+ {k:'A',label:'A picture',scr:()=>ph(ab('How it’s kept safe')+bd(`<div class="cd" style="padding:14px 6px"><div style="display:flex;align-items:center;justify-content:space-between">${[['phone','Your phone'],['lock','Locked'],['shield','Our server'],['user','Bilal']].map(([n,t],i)=>`<div style="text-align:center;width:46px"><span class="ic ${i==2?'grey':''}" style="margin:0 auto 4px">${I(n)}</span><div class="s" style="font-size:9px">${t}</div></div>`).join(`<span style="color:#A9B2AC;margin-bottom:14px">${I('chev','sm')}</span>`)}</div></div><div class="big" style="font-size:14px">Locked on your phone. Unlocked only on Bilal’s, after release.</div><div class="s">In between, it’s scrambled.</div>`))},
+ {k:'B',label:'Plain words',scr:()=>ph(ab('How it’s kept safe')+bd(cd(row(ic('lock'),'Locked before it leaves your phone')+row(ic('eye','grey'),'We only ever see scrambled text')+row(ic('user'),'Bilal can unlock it only after release')+row(ic('shield','red'),'If we’re hacked, they get scrambled text too'))))},
+ {k:'C',label:'Try it yourself',scr:()=>ph(ab('See for yourself')+bd(`<div class="s">Type anything</div>${fld('You type','chai with Ammi')}<div class="c" style="color:#A9B2AC"><span style="display:inline-block;transform:rotate(90deg)">${I('chev')}</span></div>${fld('What Amaanat sees','<span style="font-family:ui-monospace,Menlo,monospace">x9#Fq2!kL0v$7Pz</span>')}${bn('shield','Only you, and Bilal after release, can turn it back.','green')}`))}]},
+{id:'tone',sec:'tru',decides:'Language around death',
+ title:'How should Amaanat talk about death?',
+ opts:[{k:'A',label:'Plainly',scr:()=>toneScr('After you pass away, Bilal will get:')},{k:'B',label:'Gently',scr:()=>toneScr('When the time comes, Bilal will get:')},{k:'C',label:'With faith',scr:()=>toneScr('When Allah calls you back, Bilal will get:')}]},
+/* ---- Content ---- */
+{id:'photos',sec:'con',top:true,decides:'Photo feature',
+ title:'Photos: link to your albums, or keep some inside?',ur:'تصاویر: اپنے البم کا لنک، یا کچھ تصاویر ایپ کے اندر؟',
+ opts:[
+ {k:'A',label:'Link to albums you already have',scr:()=>ph(ab('Photos')+bd(
+   `${cd(row(ic('link'),'Family 2015 to 2024','Google Photos album',I('chev'))+row(ic('link'),'Hajj 2019','Google Photos album',I('chev'))+row(ic('link'),'Old prints','Folder on Google Drive',I('chev')))}
+    ${bn('','Opens in Google Photos. No photos are stored here.')}${sp}${btn('Add album link','ghost')}`))},
+ {k:'B',label:'A small album inside Amaanat',scr:()=>{const cols=['#C9B79C','#9FB8AD','#D8C3A5','#B5A7B8','#A9BCC9','#CDB0A0','#B9C7A5','#D3B89A','#A7B2A0','#C4A9A1','#B0C2BA','#D6C9AE'];
+   return ph(ab('Photos')+bd(`<div style="display:flex;justify-content:space-between;align-items:center"><span class="s">24 of 50 photos</span>${tag(I('lock','sm')+' Encrypted')}</div>
+    <div class="grid">${cols.map((c,i)=>`<i style="background:linear-gradient(${i*30}deg,${c},${cols[(i+3)%12]})"></i>`).join('')}</div>${sp}${btn('Add photos')}`))}}]},
+{id:'seal',sec:'con',decides:'Meaning of “seal”',
+ title:'When you “seal” something, what should happen?',ur:'جب آپ کسی چیز کو سیل کریں، تو کیا ہونا چاہیے؟',
+ opts:[{k:'A',label:'Kept, never opened',scr:()=>sealScr('lock','Kept, never opened','Saved safely. Nobody reads it.','')},
+       {k:'B',label:'Deleted',scr:()=>sealScr('trash','Deleted','Erased after you pass.','red')},
+       {k:'C',label:'Decide later',scr:()=>sealScr('clock','Bilal decides later','Locked for one year, then Bilal chooses.','gold')}]},
+{id:'thirdparty',sec:'con',decides:'Third-party data flag',
+ title:'Chats with other people’s messages in them?',ur:'جن چیٹس میں دوسروں کے پیغام بھی ہوں؟',
+ opts:[{k:'A',label:'Hand over the whole chat',scr:()=>chatScr(false)},{k:'B',label:'Hide other people’s messages',scr:()=>chatScr(true)}]},
+{id:'audience',sec:'con',decides:'Album audience controls',
+ title:'Who can see each photo album?',ur:'ہر البم کون دیکھ سکتا ہے؟',
+ opts:[
+ {k:'A',label:'Everyone sees every album',scr:()=>ph(ab('Photo albums')+bd(
+   `${bn('users','Everyone in your plan sees all albums.')}
+    ${cd([['Eid 2023','86 photos'],['Weddings','212 photos'],['Me & Sana','40 photos']].map(([t,s])=>row(ic('photo'),t,s,tag('Everyone','grey'))).join(''))}`))},
+ {k:'B',label:'You choose per album',scr:()=>ph(ab('Photo albums')+bd(
+   `<div class="mut">Choose who sees each album</div>
+    ${cd(row(ic('photo'),'Eid 2023','86 photos',tag('Women only','gold'))+row(ic('photo'),'Weddings','212 photos',tag('Everyone','grey'))+row(ic('photo'),'Me & Sana','40 photos',tag('Sana only')))}`))}]},
+{id:'womensteward',sec:'con',decides:'Album audience controls',
+ title:'Who should look after women-only albums?',
+ opts:[
+ {k:'A',label:'Your main steward',scr:()=>ph(ab('Eid 2023')+bd(`${cd(row(ic('photo','gold'),'Eid 2023','86 photos',tag('Women only','gold')))}<div class="lbl">Looked after by</div>${cd(pr('B','Your main steward'))}${bn('','Bilal manages it, but can share it only with women in the family.')}`))},
+ {k:'B',label:'A woman you choose',scr:()=>ph(ab('Eid 2023')+bd(`${cd(row(ic('photo','gold'),'Eid 2023','86 photos',tag('Women only','gold')))}<div class="lbl">Looked after by</div>${cd(pr('S','Daughter',tag('This album','gold')))}${bn('','Bilal never sees this album.','green')}`))}]},
+{id:'categories',sec:'con',decides:'Inventory categories',
+ title:'Is anything you care about missing?',
+ opts:[{k:'A',label:'A fixed list',scr:()=>ph(ab('What to include')+bd(catGrid(false)))},{k:'B',label:'Add your own',scr:()=>ph(ab('What to include')+bd(catGrid(true)))}]},
+/* ---- Handover ---- */
+{id:'timing',sec:'han',top:true,decides:'Checklist order and timing',
+ title:'After a loss: all tasks at once, or a few at a time?',ur:'سارے کام ایک ساتھ، یا وقت کے حساب سے تھوڑے تھوڑے؟',
+ opts:[
+ {k:'A',label:'Everything at once',scr:()=>ph(ab('After a loss')+bd(
+   `<div class="mut">9 tasks, all at once</div>${cd(tasks.map(([n,t])=>`<div class="rw" style="gap:8px"><span class="cb"></span><div class="tx" style="font-size:11.5px">${t}</div></div>`).join(''))}`))},
+ {k:'B',label:'In stages, by days of mourning',scr:()=>ph(ab('After a loss')+bd(
+   `<div class="grp"><span>First 3 days</span>${tag('Now')}</div>
+    ${cd(row(ic('sim'),'Keep her SIM active','So callers can reach you')+row(ic('users'),'Tell her WhatsApp groups'))}
+    <div class="grp"><span>After soyem</span><span class="s">3 tasks</span></div>
+    ${cd(row(ic('clock','grey'),'Opens on day 4','Chats, certificate, FRC'),'dim')}
+    <div class="grp"><span>After chehlum</span><span class="s">4 tasks</span></div>
+    ${cd(row(ic('clock','grey'),'Opens on day 40','Bank, wallets, phone'),'dim')}`))}]},
+{id:'layout',sec:'han',decides:'Handover layout',
+ title:'A full list, or one step at a time?',ur:'پوری فہرست، یا ایک وقت میں ایک قدم؟',
+ opts:[
+ {k:'A',label:'Full checklist',scr:()=>ph(ab('Ammi’s handover')+bd(
+   `<div style="display:flex;justify-content:space-between" class="s"><span>3 of 9 done</span></div><div class="prog"><i style="width:33%"></i></div>
+    ${cd(tasks.slice(0,7).map(([n,t],i)=>`<div class="rw" style="gap:8px"><span class="cb ${i<3?'f':''}">${i<3?I('check','sm'):''}</span><div class="tx" style="${i<3?'text-decoration:line-through;color:#8C9590':''};font-size:11.5px">${t}</div></div>`).join(''))}`))},
+ {k:'B',label:'One step at a time',scr:()=>ph(ab('Ammi’s handover')+bd(
+   `<div class="s">Step 4 of 9</div><div class="prog"><i style="width:44%"></i></div>
+    <div class="cd" style="padding:14px 12px;margin-top:4px"><div class="ic" style="width:40px;height:40px;border-radius:12px;margin-bottom:10px">${I('chat','lg')}</div>
+     <div class="big" style="font-size:16px">Save Ammi’s WhatsApp chats</div>
+     <div class="s" style="font-size:11px;margin-top:6px">Chats can be lost if her number stays off. Save them to Google Drive.</div>
+     <div class="s" style="margin-top:10px;color:var(--p);font-weight:600">Show me how</div></div>
+    ${sp}${btn('Done')}${btn('Do it later','ghost')}`))}]},
+{id:'stuck',sec:'han',decides:'Steps in the after-loss guide',
+ title:'Stuck on a task: what helps most?',
+ opts:[
+ {k:'A',label:'A list of what to bring',scr:()=>ph(ab('Transfer her SIM')+bd(`<div class="s">Bring these to the franchise</div>${cd(['Death certificate','FRC from NADRA','Your CNIC','Her SIM card'].map((t,i)=>`<div class="rw" style="gap:8px"><span class="cb ${i<2?'f':''}">${i<2?I('check','sm'):''}</span><div class="tx" style="font-size:11.5px">${t}</div></div>`).join(''))}${bn('','Lost the SIM? You’ll also need an FIR and NOC.','gold')}${sp}${btn('Done')}`))},
+ {k:'B',label:'Where to go, step by step',scr:()=>ph(ab('Transfer her SIM')+bd(`<div class="steps" style="margin-top:4px">${[['Go to her network’s franchise','Take her SIM with you'],['Show the documents','We’ll list them for you'],['Get the SIM in your name','Same number stays active']].map(([t,x],i)=>`<div class="st"><span class="d ${i==0?'f':''}"></span><div><div class="t">${t}</div><div class="s">${x}</div></div></div>`).join('')}</div>${sp}${btn('Find nearest franchise')}`))}]},
+{id:'grieftone',sec:'han',decides:'Handover language',
+ title:'How should the handover greet the steward?',
+ opts:[
+ {k:'A',label:'Straight to tasks',scr:()=>ph(ab('Ammi’s handover')+bd(`<div class="s">2 tasks for today</div>${cd(row(ic('sim'),'Keep her SIM active','So callers can reach you')+row(ic('users'),'Tell her WhatsApp groups'))}${sp}${btn('Start')}`))},
+ {k:'B',label:'A gentle start',scr:()=>ph(ab('',false)+bd(`<div class="ic" style="width:50px;height:50px;border-radius:50%;margin:30px auto 8px">${I('heart','lg')}</div><div class="big c">We’re sorry for your loss.</div><div class="s c" style="font-size:11.5px">Take your time. Nothing here has to happen today.</div>${sp}${btn('Show me what’s needed')}${btn('Not now','ghost')}`))}]},
+/* ---- Getting started ---- */
+{id:'opener',sec:'sta',decides:'Onboarding message',
+ title:'Which first screen makes you want to start?',ur:'کون سی پہلی اسکرین دیکھ کر آپ شروع کرنا چاہیں گے؟',
+ opts:[
+ {k:'A',label:'For your family',scr:()=>onboard('Make things easier for your family.','So your children know what to do, and what you wanted.',
+   `<div style="position:absolute;inset:0;background:#DCE8E2"></div><div style="position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;align-items:flex-end;gap:6px">${av('N','a4','lg')}<span class="av a1" style="width:38px;height:38px">B</span><span class="av a2" style="width:34px;height:34px">S</span></div><div style="position:absolute;top:44px;left:50%;transform:translateX(-50%);width:120px;height:60px;border-radius:60px 60px 0 0;border:2px solid #1E5B4F;border-bottom:0;opacity:.35"></div>`)},
+ {k:'B',label:'For yourself',scr:()=>onboard('Know where everything is.','Your accounts, papers and keys, in one place.',
+   `<div style="position:absolute;inset:0;background:#F1E8D3"></div><div style="position:absolute;inset:50px 46px 24px;display:grid;grid-template-columns:1fr 1fr;gap:8px">${['bank','doc','wallet','pin'].map(n=>`<span class="ic gold" style="width:auto;height:auto;border-radius:14px">${I(n,'lg')}</span>`).join('')}</div>`)}]},
+{id:'together',sec:'sta',decides:'“Set up with family” mode',
+ title:'Set it up alone, or with family?',ur:'اکیلے سیٹ اپ کریں، یا گھر والوں کے ساتھ؟',
+ opts:[
+ {k:'A',label:'On your own',scr:()=>ph(ab('Set up')+bd(
+   `<div class="prog"><i style="width:25%"></i></div><div class="mut">Step 1 of 4</div>
+    <div class="big">Who should look after things?</div>${fld('Name','<span style="color:#A3ACA7">Type a name</span>')}${fld('Phone','<span style="color:#A3ACA7">03xx xxxxxxx</span>')}
+    <div class="s" style="color:var(--p);font-weight:600">Pick from contacts</div>${sp}${btn('Next')}`))},
+ {k:'B',label:'Together with your child',scr:()=>ph(ab('Set up')+bd(
+   `<div style="display:flex;align-items:center;justify-content:center;gap:0;margin:8px 0 2px">${av('N','a4','lg')}<span style="width:34px;height:2px;background:#1E5B4F"></span>${av('B','a1','lg')}</div>
+    <div class="big c" style="font-size:15px">Setting up with Bilal</div><div class="s c">He can fill things in. You approve each step.</div>
+    ${cd(row(ic('bank'),'Bank accounts','Bilal added 2',`<span class="btn sm">Approve</span>`)+row(ic('doc'),'Documents','Bilal added 3',`<span class="btn sm">Approve</span>`))}
+    ${sp}${btn('Next')}`))}]},
+{id:'name',sec:'sta',decides:'App name',
+ title:'Which name feels okay on a shared phone?',ur:'مشترکہ فون پر کون سا نام ٹھیک لگتا ہے؟',
+ opts:[
+ {k:'A',label:'Amaanat',scr:()=>homeScr(`<div class="app target"><i style="background:#1E5B4F">${I('lock','lg')}</i>Amaanat</div>`)},
+ {k:'B',label:'Ghar Diary',scr:()=>homeScr(`<div class="app target"><i style="background:#B8872B">${I('book','lg')}</i>Ghar Diary</div>`)},
+ {k:'C',label:'A plain “Notes” app',scr:()=>homeScr(`<div class="app target"><i style="background:#E4C553;color:#3A3112">${I('note','lg')}</i>Notes</div>`)}]},
+{id:'reminder',sec:'sta',decides:'Onboarding triggers',
+ title:'What would get you to set it up, or keep it updated?',
+ opts:[
+ {k:'A',label:'A yearly reminder from the app',scr:()=>`<div class="ph"><div class="scr lock">${SB()}<div class="time">9:41</div><div class="date">Friday, 1 January</div>
+   <div class="ntf"><span class="ic" style="background:#E1ECE7">${I('lock')}</span><div style="flex:1"><div style="display:flex;justify-content:space-between"><b style="font-size:11.5px">Amaanat</b><span style="font-size:10px;opacity:.8">now</span></div><div style="font-size:11.5px;margin-top:2px">It’s been a year. Is your plan still right? Takes 2 minutes.</div></div></div><div class="hi" style="background:#fff"></div></div></div>`},
+ {k:'B',label:'A nudge from your child',scr:()=>`<div class="ph"><div class="scr wa">${SB()}<div class="wah">${I('back','lg')}${av('B','a1')}<div><div class="t">Bilal</div><div style="font-size:10px;opacity:.75">online</div></div></div>
+   <div class="wab"><div class="bub">Ammi, did you finish setting up Amaanat?<small>7:12</small></div><div class="bub">I can sit with you this weekend and we’ll do it together.<small>7:12</small></div>
+   <div class="bub me">Haan beta, Sunday after lunch.<small>7:30</small></div></div><div class="wai"><div></div></div><div class="hi"></div></div></div>`}]}
+];
+
+const DROP=new Set(['starter','hospital','veto','asktone','suggest','seeall','rehearse','tone','womensteward','grieftone','opener','together','name']);
+Q.splice(0,Q.length,...Q.filter(q=>!DROP.has(q.id)));
+
+/* ================= state ================= */
+const BK='amaanat-codesign-backup';
+let view='start';
+let S={id:'',name:'',age:'',picks:{},idx:0,status:''};
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const app=document.getElementById('app');
+function backup(){try{localStorage.setItem(BK,JSON.stringify(S))}catch(e){}}
+try{const b=JSON.parse(localStorage.getItem(BK)||'null');if(b&&b.id&&b.status!=='sent'){S=b;view=b.status?'done':'q'}}catch(e){}
+
+function render(){
+  const who=document.getElementById('who');
+  who.hidden=view==='start';who.textContent=S.name;
+  if(view==='start')renderStart();else if(view==='q')renderQ();else renderDone();
+}
+function renderStart(){
+  app.innerHTML=`<section class="start">
+   <h1>Which one feels right?</h1>
+   <p>You’ll see ${Q.length} short questions. Each shows two or three versions of an app screen. Tap the one you prefer. There are no right answers.</p>
+   <div class="field"><label for="nm">Name</label><input id="nm" autocomplete="off" value="${esc(S.name)}"></div>
+   <div class="field"><label for="ag">Age</label><input id="ag" type="number" inputmode="numeric" min="1" max="120" value="${esc(S.age)}"></div>
+   <button class="go" id="go">Start</button></section>`;
+  const nm=app.querySelector('#nm'),ag=app.querySelector('#ag'),go=app.querySelector('#go');
+  const upd=()=>{go.disabled=!(nm.value.trim()&&ag.value.trim())};
+  nm.oninput=ag.oninput=upd;upd();
+  go.onclick=()=>{S={id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),name:nm.value.trim(),age:ag.value.trim(),picks:{},idx:0,status:''};backup();view='q';render()};
+}
+function renderQ(){
+  const q=Q[S.idx],pick=S.picks[q.id],last=S.idx===Q.length-1;
+  app.innerHTML=`<div class="qmeta"><span>${SECTIONS[q.sec]}</span><span class="bar"><i style="width:${(S.idx+1)/Q.length*100}%"></i></span><span>${S.idx+1} of ${Q.length}</span></div>
+   <div class="qhead"><h1>${q.title}</h1></div>
+   <div class="opts" role="radiogroup" aria-label="${esc(q.title)}">${q.opts.map(o=>`<div class="opt ${pick===o.k?'on':''}" role="radio" tabindex="0" aria-checked="${pick===o.k}" data-k="${o.k}">
+      <div class="lab"><span class="letter">${o.k}</span>${o.label}</div>${o.scr()}<div class="pick">${pick===o.k?'Chosen':'Tap to choose'}</div></div>`).join('')}</div>
+   <div class="navrow"><button class="nbtn" id="prev" ${S.idx===0?'disabled':''}>Back</button>
+     <div class="mid"><button class="nbtn" id="unsure" aria-pressed="${pick==='?'}">Not sure</button></div>
+     <button class="nbtn primary" id="next" ${pick?'':'disabled'}>${last?'Send my answers':'Next'}</button></div>`;
+  app.querySelectorAll('.opt').forEach(el=>{el.onclick=()=>choose(el.dataset.k);el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();choose(el.dataset.k)}}});
+  app.querySelector('#prev').onclick=()=>move(-1);
+  app.querySelector('#next').onclick=()=>move(1);
+  app.querySelector('#unsure').onclick=()=>choose('?');
+}
+function choose(k){const q=Q[S.idx];S.picks[q.id]=k;backup();renderQ()}
+function move(d){
+  const n=S.idx+d;if(n<0)return;
+  if(d>0&&!S.picks[Q[S.idx].id])return;
+  if(n>=Q.length){view='done';send();return}
+  S.idx=n;backup();renderQ();window.scrollTo({top:0,behavior:'smooth'});
+}
+document.addEventListener('keydown',e=>{
+  if(view!=='q'||e.target.tagName==='INPUT')return;
+  const q=Q[S.idx],k=e.key.toUpperCase();
+  if(q.opts.some(o=>o.k===k))choose(k);else if(e.key==='ArrowRight')move(1);else if(e.key==='ArrowLeft')move(-1);
+});
+async function send(){
+  S.status='sending';backup();render();
+  const payload={id:S.id,name:S.name,age:S.age,submittedAt:new Date().toISOString(),
+    answers:Q.map(q=>{const k=S.picks[q.id];const o=q.opts.find(x=>x.k===k);return {id:q.id,question:q.title,choice:k||'',label:k==='?'?'Not sure':(o?o.label:'')}})};
+  try{
+    if(!/^https:\/\//.test(ENDPOINT))throw new Error('no endpoint');
+    await fetch(ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+    S.status='sent';
+  }catch(e){S.status='failed'}
+  backup();render();
+}
+function renderDone(){
+  const st=S.status;
+  app.innerHTML=`<section class="start" style="text-align:center">
+   <div style="width:64px;height:64px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;margin:0 auto 18px"><svg viewBox="0 0 24 24" style="width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round">${st==='failed'?IC.x:IC.check}</svg></div>
+   <h1>${st==='sending'?'Sending…':st==='failed'?'Your answers didn’t send':'Thank you, '+esc(S.name)+'.'}</h1>
+   <p>${st==='sending'?'One moment.':st==='failed'?'Check your internet connection and try again. Your answers are kept on this device.':'Your answers have been sent. You can close this page.'}</p>
+   ${st==='failed'?'<button class="go" id="retry">Try again</button>':''}
+   ${st==='sent'?'<button class="nbtn" id="again" style="margin-top:8px">Start again for someone else</button>':''}</section>`;
+  const r=app.querySelector('#retry');if(r)r.onclick=send;
+  const a=app.querySelector('#again');if(a)a.onclick=()=>{try{localStorage.removeItem(BK)}catch(e){};S={id:'',name:'',age:'',picks:{},idx:0,status:''};view='start';render()};
+}
+render();
+</script>
+</body>
+</html>
